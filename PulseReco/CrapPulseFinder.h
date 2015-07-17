@@ -15,7 +15,6 @@
 #define CRAPPULSEFINDER_H
 
 #include <iostream>
-#include "PedEstimator.h"
 /**
    \class CrapPulseFinder
    User defined class CrapPulseFinder ... these comments are used to generate
@@ -45,24 +44,7 @@ public:
   /// Default destructor
   ~CrapPulseFinder(){}
 
-  std::vector<Pulse_t> Reconstruct(std::vector<unsigned short> wf) {
-    
-    std::vector<Pulse_t> result;
-
-    auto ped_info = _algo.Calculate(wf);
-
-    std::cout<<"Pedestal Mean: "<< ped_info.first << " ... RMS: " << ped_info.second << std::endl;
-
-    // Find pulse.
-    
-    // done
-    
-    return result;
-
-  }
-
-  PedEstimator _algo;
-
+  
 };
 
 #endif
