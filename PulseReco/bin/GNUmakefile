@@ -1,5 +1,5 @@
 # Include your header file location
-CXXFLAGS += -I$(LARLITE_USERDEVDIR)/OpticalCalibration
+CXXFLAGS += -I$(LARLITE_USERDEVDIR)/OpticalCalibration -I$(LARLITE_USERDEVDIR)/OpticalCalibration/PulseReco
 CXXFLAGS += -I. $(shell root-config --cflags) -g
 
 # Include your shared object lib location
