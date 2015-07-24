@@ -28,8 +28,8 @@
    doxygen documentation!
  */
 
-
-class LogicPulseFinder{
+template <class T>
+class LogicPulseFinder {
 
 public:
 
@@ -44,10 +44,9 @@ public:
 //TTL waveform the peaks should all be very similar in structure. Simply scans through looking for
 //rising points at 50% of max and calls them the pulse start time. Fills an output vector
 //with these points as well as outputting the number of peaks found.
-  std::vector<int> Get_TTL_Starts(std::vector<short> wfm);
+  std::vector<int> Get_TTL_Starts(std::vector<T> wfm);
 
-
-  std::map<std::string,float> TTL_Health(std::vector<short> wfm);
+  std::map<std::string,float> TTL_Health(std::vector<T> wfm);
 };
 
 #endif

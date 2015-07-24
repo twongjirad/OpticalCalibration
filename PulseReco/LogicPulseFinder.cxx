@@ -16,7 +16,9 @@
 ///TTL pulses. It then returns the position associated with the 50% rising edge  ///
 ///of each TTL and outputs this list of rising edge positions to a vector 	 ///
 ////////////////////////////////////////////////////////////////////////////////////
-std::vector<int> LogicPulseFinder::Get_TTL_Starts(std::vector<short> wfm)
+
+template <class T>
+std::vector<int> LogicPulseFinder<T>::Get_TTL_Starts(std::vector<T> wfm)
 {
 
 	std::vector<int> TTL_times;
@@ -51,7 +53,8 @@ std::vector<int> LogicPulseFinder::Get_TTL_Starts(std::vector<short> wfm)
 /// 3) MAYBE IMPLEMENT MORE CHECKS??						 ///
 ////////////////////////////////////////////////////////////////////////////////////
 
-std::map<std::string,float> LogicPulseFinder::TTL_Health(std::vector<short> wfm)
+template <class T>
+std::map<std::string,float> LogicPulseFinder<T>::TTL_Health(std::vector<T> wfm)
 {
 
         std::map<std::string,float> TTL_Health_Flags;
@@ -92,10 +95,10 @@ std::map<std::string,float> LogicPulseFinder::TTL_Health(std::vector<short> wfm)
 /// chi2/df is read out								 ///
 ////////////////////////////////////////////////////////////////////////////////////
 
-	std::vector<short> wfm_tmp1;
-	std::vector<short> wfm_tmp2;
-	std::vector<short> wfm_tmp3;
-	std::vector<short> wfm_tmp4;
+	std::vector<T> wfm_tmp1;
+	std::vector<T> wfm_tmp2;
+	std::vector<T> wfm_tmp3;
+	std::vector<T> wfm_tmp4;
 	
 	int start2 = floor(wfm.size()/4);
 	int start3 = floor(wfm.size()/2);
@@ -122,6 +125,5 @@ std::map<std::string,float> LogicPulseFinder::TTL_Health(std::vector<short> wfm)
 	return TTL_Health_Flags;
 
 }
-
 
 #endif
