@@ -47,15 +47,33 @@
 int main(int argc, char** argv){
 
   //TFile* input = new TFile( "../data/20150721/wf_sequence_highstat.root", "OPEN" );
-  TFile* input = new TFile( "../data/20150721/wf_flasher_highstat_04.root", "OPEN" ); // about 256 ticks per TTL
+  //TFile* input = new TFile( "../data/20150721/wf_flasher_highstat_04.root", "OPEN" ); // about 256 ticks per TTL
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_072515/wf_run_001.root", "OPEN" );
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_072515/wf_run_002.root", "OPEN" );
+
+  // 2015/07/30: Flasher tuning run
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_083015/wf_run010.root", "OPEN" );
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_073015/wf_run012.root", "OPEN" );
+  
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080115/wf_run005.root", "OPEN" );
+  //std::string output = "results_20150801_wf_run_005.root";
+
+  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080515/wf_run001.root", "OPEN" );
+  //std::string output = "results_20150806_wf_run_001.root";  
+
+  TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080715/wf_run004.root", "OPEN" );
+  std::string output = "results_20150807_wf_run_004.root";  
 
   TTree* tree = (TTree*)input->Get( "raw_wf_tree" );
 
-  int baseline_end = 100;
+  unsigned short LOGIC_CH = 39;
+  
+  int baseline_start = 100;
+  int baseline_end = 200;
   int pulse_start = 0;
-  int pulse_end   = 255;
-  int integral_start = 175;
-  int integral_end   = 225;
+  int pulse_end   = 75;
+  int integral_start = 0;
+  int integral_end   = 75;
 
   unsigned short ch;
   unsigned short slot;
@@ -76,7 +94,7 @@ int main(int argc, char** argv){
   const int CHARGEMODE = 1;
   int mode = TTLMODE;
 
-  TFile* out =  new TFile("results_04.root", "RECREATE" );
+  TFile* out =  new TFile(output.c_str(), "RECREATE" );
   double charge;
   double maxamp;
   int ievent;
@@ -104,7 +122,7 @@ int main(int argc, char** argv){
     // ------------------------------------------------------------
     if ( mode==TTLMODE ) {
       // search for TLL
-      if ( slot!=6 || ch!=38 ) {
+      if ( slot!=6 || ch!=LOGIC_CH ) {
 	entry++;
 	continue;
       }
@@ -143,7 +161,7 @@ int main(int argc, char** argv){
 	  double x = 0.;
 	  double xx = 0.;
 	  double ticks = 0;
-	  for ( int tdc=ttlpulses.at(ipulse); tdc<ttlpulses.at(ipulse)+baseline_end; tdc++ ) {
+	  for ( int tdc=ttlpulses.at(ipulse)+baseline_start; tdc<ttlpulses.at(ipulse)+baseline_end; tdc++ ) {
 	    if ( tdc>=adcs->size() )
 	      break;
 	    x += (double)adcs->at( tdc );
