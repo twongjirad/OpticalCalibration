@@ -9,7 +9,7 @@ gStyle.SetPadTopMargin(0.15)
 
 gStyle.SetTitleX(0.5) 
 gStyle.SetTitleY(1.0) 
-gStyle.SetTitleW(0.7) 
+gStyle.SetTitleW(0.9) 
 gStyle.SetTitleH(0.13)
 
 
@@ -85,11 +85,11 @@ c3 = TCanvas("c3","",800,600)
 c3.Draw()
 for p in xrange(0,5):
     panellist = panels[p]
-    cp = TCanvas("canv%d"%(p),"Panel %d"%(p),2400,2000)
+    cp = TCanvas("canv%d"%(p),"Panel %d"%(p),1300,1400)
     cp.Divide(4,5)
     cp.Draw()
 
-    cp_zoomout = TCanvas("canv%d_zoomout"%(p),"Zoom out: Panel %d"%(p),2400,2000)
+    cp_zoomout = TCanvas("canv%d_zoomout"%(p),"Zoom out: Panel %d"%(p),1800,2000)
     cp_zoomout.Divide(4,5)
     cp_zoomout.Draw()
 
@@ -101,14 +101,15 @@ for p in xrange(0,5):
         print "panel id: ",ipanel
         cp.cd( padid )
         hname = "h2_ch%d_pmt%d"%(readch,pmtid)
-        htitle = "FEMCH %d : PMT POSID %d;max amp;area" % ( readch, pmtid )
+        #htitle = "FEMCH %d : PMT POSID %d;max amp;area" % ( readch, pmtid )
+        htitle = "PMT P%02d: spe shape;amp. (ADC counts);area (counts*samples)" % ( pmtid )
         hists[ pmtid ] = TH2D( hname, htitle, 50, 0, 50, 50, 0, 500 )
-        hists[ pmtid ].GetXaxis().SetLabelSize(0.10)
-        hists[ pmtid ].GetYaxis().SetLabelSize(0.10)
-        hists[ pmtid ].GetXaxis().SetTitleSize(0.12)
-        hists[ pmtid ].GetYaxis().SetTitleSize(0.12)
-        hists[ pmtid ].GetXaxis().SetTitleOffset(0.7)
-        hists[ pmtid ].GetYaxis().SetTitleOffset(0.7)
+        hists[ pmtid ].GetXaxis().SetLabelSize(0.09)
+        hists[ pmtid ].GetYaxis().SetLabelSize(0.09)
+        hists[ pmtid ].GetXaxis().SetTitleSize(0.10)
+        hists[ pmtid ].GetYaxis().SetTitleSize(0.09)
+        hists[ pmtid ].GetXaxis().SetTitleOffset(0.8)
+        hists[ pmtid ].GetYaxis().SetTitleOffset(0.85)
         hists[ pmtid ].GetXaxis().SetNdivisions(505)
         hists[ pmtid ].GetYaxis().SetNdivisions(505)
 
@@ -119,43 +120,77 @@ for p in xrange(0,5):
         cp.Update()
 
         cp_zoomout.cd( padid )
-        hname = "h2_ch%d_pmt%d_zoomout"%(readch,pmtid)
-        htitle = "FEMCH %d : PMT POSID %d;max amp;area" % ( readch, pmtid )
-        hists_zoomout[ pmtid ] = TH2D( hname, htitle, 50, 0, 500, 50, 0, 5000 )
+        hname_zoomout = "h2_ch%d_pmt%d_zoomout"%(readch,pmtid)
+        #htitle = "FEMCH %d : PMT POSID %d;max amp;area" % ( readch, pmtid )
+        htitle = "PMT P%02d: spe;amp (ADC counts);area (ADC counts*samples)" % ( pmtid )
+        hists_zoomout[ pmtid ] = TH2D( hname_zoomout, htitle, 50, 0, 500, 50, 0, 5000 )
         hists_zoomout[ pmtid ].GetXaxis().SetLabelSize(0.08)
         hists_zoomout[ pmtid ].GetYaxis().SetLabelSize(0.08)
         print "Plotting ",htitle.split(";")[0]
-        outtree.Draw("charge:maxamp>>%s"%(hname),"opchannel==%d && maxamp>7.0 && charge>20.0"%(readch),"COLZ")
+        outtree.Draw("charge:maxamp>>%s"%(hname_zoomout),"opchannel==%d && maxamp>7.0 && charge>20.0"%(readch),"COLZ")
         cp_zoomout.cd( padid ).SetLogz(1)
         cp_zoomout.Update()
 
+        # single plot
         c2.cd()
-        hists[ pmtid ].Draw("COLZ")
+        hsingle = hists[ pmtid ].Clone( hname+"_single" )
+        hsingle.GetXaxis().SetLabelSize(0.08)
+        hsingle.GetYaxis().SetLabelSize(0.07)
+        hsingle.GetXaxis().SetTitleSize(0.09)
+        hsingle.GetYaxis().SetTitleSize(0.07)
+        hsingle.GetXaxis().SetTitleOffset(1.0)
+        hsingle.GetYaxis().SetTitleOffset(1.1)
+        hsingle.GetXaxis().SetNdivisions(505)
+        hsingle.GetYaxis().SetNdivisions(505)
+        hsingle.Draw("COLZ")
         c2.SetLogy(0)
         c2.Update()
+        #raw_input()
         c2.SaveAs(folder+"/%s.png"%(hname))
-        
-        hxname = "h2_ch%d_pmt%d_zoomout"%(readch,pmtid)+"_px"
-        px = TH1D( hxname,"max amp. (ADC counts)", 50, 0, 50 )
+        c2.SaveAs(folder+"/%s.pdf"%(hname))
+        c2.SaveAs(folder+"/%s.eps"%(hname))
+
+        # 1D Amplitude
+        hxname = "h2_ch%d_pmt%d"%(readch,pmtid)+"_px"
+        px = TH1D( hxname,";amplitude (ADC counts);events", 50, 0, 50 )
+        px.GetXaxis().SetLabelSize(0.08)
+        px.GetYaxis().SetLabelSize(0.07)
+        px.GetXaxis().SetTitleSize(0.09)
+        px.GetYaxis().SetTitleSize(0.07)
+        px.GetXaxis().SetTitleOffset(1.0)
+        px.GetYaxis().SetTitleOffset(1.1)
+        px.GetXaxis().SetNdivisions(505)
+        px.GetYaxis().SetNdivisions(505)
         outtree.Draw("maxamp>>%s"%(hxname),"opchannel==%d && charge>0.0"%(readch),"COLZ")
         savehists.append( px )
-        #px = hists[ pmtid ].ProjectionX()
         px.Draw()
         c2.SetLogy(1)
         c2.Update()
         c2.SaveAs(folder+"/hamp_ch%d_pmt%d.png"%(readch,pmtid))
         c2.SetLogy(0)
-        hxname = "h2_ch%d_pmt%d_zoomout"%(readch,pmtid)+"_linear_px"
-        px = TH1D( hxname,"max amp. (ADC counts)", 50, 0, 50 )
-        outtree.Draw("maxamp>>%s"%(hxname),"opchannel==%d && maxamp>6.0 && charge>0.0"%(readch),"COLZ")
-        savehists.append( px )
+        hlxname = "h2_ch%d_pmt%d_"%(readch,pmtid)+"_linear_px"
+        lpx = TH1D( hlxname,";amplitude (ADC counts);events", 50, 0, 50 )
+        lpx.GetXaxis().SetLabelSize(0.08)
+        lpx.GetYaxis().SetLabelSize(0.07)
+        lpx.GetXaxis().SetTitleSize(0.09)
+        lpx.GetYaxis().SetTitleSize(0.07)
+        lpx.GetXaxis().SetTitleOffset(1.0)
+        lpx.GetYaxis().SetTitleOffset(1.1)
+        lpx.GetXaxis().SetNdivisions(505)
+        lpx.GetYaxis().SetNdivisions(505)
+        
+        outtree.Draw("maxamp>>%s"%(hlxname),"opchannel==%d && maxamp>6.0 && charge>0.0"%(readch),"COLZ")
+        savehists.append( lpx )
         c2.SaveAs(folder+"/hamp_ch%d_pmt%d_linear.png"%(readch,pmtid))
+        raw_input()
         
         ipanel += 1
-    cp.SaveAs(folder+"/panel%d.pdf"%(p+1))
+    for ext in ["pdf","eps","png"]:
+        cp.SaveAs(folder+"/panel%d.%s"%(p+1,ext))
     cp_zoomout.SaveAs(folder+"/zoomout_panel%d.pdf"%(p+1))
     canvs.append( cp )
     canvs.append( cp_zoomout )
+    break
 
 out.Write()
 raw_input()
