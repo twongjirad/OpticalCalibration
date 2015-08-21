@@ -131,8 +131,18 @@ for p in xrange(0,5):
         cp_zoomout.cd( padid ).SetLogz(1)
         cp_zoomout.Update()
 
+        # prelimnary warnings        
+        ttext1 = TText(0.5, 0.8, "MicroBooNE Preliminary" )
+        ttext1.SetNDC()
+        ttext1.SetTextColor( kRed )
+        
+        ttext2 = TText(0.5, 0.9, "MicroBooNE Preliminary" )
+        ttext2.SetNDC()
+        ttext2.SetTextColor( kRed )
+
         # single plot
         c2.cd()
+        c2.cd(0).SetTopMargin(0.15)
         hsingle = hists[ pmtid ].Clone( hname+"_single" )
         hsingle.GetXaxis().SetLabelSize(0.08)
         hsingle.GetYaxis().SetLabelSize(0.07)
@@ -143,6 +153,7 @@ for p in xrange(0,5):
         hsingle.GetXaxis().SetNdivisions(505)
         hsingle.GetYaxis().SetNdivisions(505)
         hsingle.Draw("COLZ")
+        ttext1.Draw()
         c2.SetLogy(0)
         c2.Update()
         #raw_input()
@@ -151,6 +162,7 @@ for p in xrange(0,5):
         c2.SaveAs(folder+"/%s.eps"%(hname))
 
         # 1D Amplitude
+        c2.cd(0).SetTopMargin(0.05)
         hxname = "h2_ch%d_pmt%d"%(readch,pmtid)+"_px"
         px = TH1D( hxname,";amplitude (ADC counts);events", 50, 0, 50 )
         px.GetXaxis().SetLabelSize(0.08)
@@ -164,9 +176,11 @@ for p in xrange(0,5):
         outtree.Draw("maxamp>>%s"%(hxname),"opchannel==%d && charge>0.0"%(readch),"COLZ")
         savehists.append( px )
         px.Draw()
+        ttext2.Draw()
         c2.SetLogy(1)
         c2.Update()
-        c2.SaveAs(folder+"/hamp_ch%d_pmt%d.png"%(readch,pmtid))
+        for ext in ["pdf","png","eps"]:
+            c2.SaveAs(folder+"/hamp_ch%d_pmt%d.%s"%(readch,pmtid,ext))
         c2.SetLogy(0)
         hlxname = "h2_ch%d_pmt%d_"%(readch,pmtid)+"_linear_px"
         lpx = TH1D( hlxname,";amplitude (ADC counts);events", 50, 0, 50 )
@@ -178,11 +192,12 @@ for p in xrange(0,5):
         lpx.GetYaxis().SetTitleOffset(1.1)
         lpx.GetXaxis().SetNdivisions(505)
         lpx.GetYaxis().SetNdivisions(505)
-        
         outtree.Draw("maxamp>>%s"%(hlxname),"opchannel==%d && maxamp>6.0 && charge>0.0"%(readch),"COLZ")
+        lpx.SetMaximum( lpx.GetMaximum()*1.2 )
+        ttext2.Draw()
         savehists.append( lpx )
-        c2.SaveAs(folder+"/hamp_ch%d_pmt%d_linear.png"%(readch,pmtid))
-        raw_input()
+        for ext in ["pdf","eps","png"]:
+            c2.SaveAs(folder+"/hamp_ch%d_pmt%d_linear.%s"%(readch,pmtid,ext))
         
         ipanel += 1
     for ext in ["pdf","eps","png"]:
