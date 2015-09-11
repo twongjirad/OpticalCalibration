@@ -8,6 +8,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 ////////////////////////////////////////////////////////////////////////////////////
 ///Checks for TTL pulses and returns a vector of times at which they start.      ///
@@ -27,10 +28,12 @@ std::vector<int> LogicPulseFinder<T>::Get_TTL_Starts(std::vector<T> wfm)
 	auto minimum = min_element(std::begin(wfm) , std:: end(wfm));
 
 	int in_pulse = 1;
+	std::cout << "maxamp=" << *max_amp << " min=" << *minimum << std::endl;
 
 	for (unsigned int i=0; i<wfm.size(); i++) {
-		
-	        if (float(wfm[i]) < *minimum+0.5*( *max_amp - *minimum)) {
+
+	  auto pulseheight = *max_amp - *minimum;
+	        if (pulseheight>100 && float(wfm[i]) < *minimum+0.5*( *max_amp - *minimum)) {
 			in_pulse = 0;
 		}
 

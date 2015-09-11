@@ -32,60 +32,127 @@
 *Entries :   446508 : Total  Size= 1708702854 bytes  File Size  =  297444664 *
 *Baskets :     6054 : Basket Size=   25600000 bytes  Compression=   5.74     *
 *............................................................................*
+
+******************************************************************************
+*Tree    :OpDetWaveforms: PMT Readout Waveforms                                  *
+*Entries :    80000 : Total =       326048558 bytes  File  Size =   61947878 *
+*        :          : Tree compression factor =   5.27                       *
+******************************************************************************
+*Br    0 :run       : run/I                                                  *
+*Entries :    80000 : Total  Size=     321186 bytes  File Size  =       2618 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression= 122.51     *
+*............................................................................*
+*Br    1 :subrun    : subrun/I                                               *
+*Entries :    80000 : Total  Size=     321225 bytes  File Size  =       2438 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression= 131.56     *
+*............................................................................*
+*Br    2 :event     : event/I                                                *
+*Entries :    80000 : Total  Size=     321212 bytes  File Size  =       5824 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  55.07     *
+*............................................................................*
+*Br    3 :opcrate   : opcrate/I                                              *
+*Entries :    80000 : Total  Size=     321238 bytes  File Size  =       2638 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression= 121.59     *
+*............................................................................*
+*Br    4 :opslot    : opslot/I                                               *
+*Entries :    80000 : Total  Size=     321225 bytes  File Size  =       8544 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  37.54     *
+*............................................................................*
+*Br    5 :opfemch   : opfemch/I                                              *
+*Entries :    80000 : Total  Size=     321238 bytes  File Size  =       6071 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  52.83     *
+*............................................................................*
+*Br    6 :frame     : frame/I                                                *
+*Entries :    80000 : Total  Size=     321212 bytes  File Size  =       5294 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  60.59     *
+*............................................................................*
+*Br    7 :sample    : sample/I                                               *
+*Entries :    80000 : Total  Size=     321225 bytes  File Size  =       8727 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  36.75     *
+*............................................................................*
+*Br    8 :timestamp : timestamp/D                                            *
+*Entries :    80000 : Total  Size=     641908 bytes  File Size  =      14433 *
+*Baskets :       15 : Basket Size=      81408 bytes  Compression=  44.43     *
+*............................................................................*
+*Br    9 :readoutch : readoutch/I                                            *
+*Entries :    80000 : Total  Size=     321264 bytes  File Size  =       5030 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  63.77     *
+*............................................................................*
+*Br   10 :category  : category/I                                             *
+*Entries :    80000 : Total  Size=     321251 bytes  File Size  =       4392 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  73.03     *
+*............................................................................*
+*Br   11 :gaintype  : gaintype/I                                             *
+*Entries :    80000 : Total  Size=     321251 bytes  File Size  =       4387 *
+*Baskets :        9 : Basket Size=      51200 bytes  Compression=  73.12     *
+*............................................................................*
+*Br   12 :adcs      : vector<short>                                          *
+*Entries :    80000 : Total  Size=  321872600 bytes  File Size  =   61833753 *
+*Baskets :     5434 : Basket Size=   25600000 bytes  Compression=   5.20     *
+*............................................................................*
+
 */
 
 #include <iostream>
 
 #include "TFile.h"
 #include "TTree.h"
+#include "TChain.h"
 #include "TBranch.h"
 
 #include "PulseReco/LogicPulseFinder.h"
 
 #include <vector>
 
+#define WFTREE 0
+#define RAWDIGITS 1
+
 int main(int argc, char** argv){
 
-  //TFile* input = new TFile( "../data/20150721/wf_sequence_highstat.root", "OPEN" );
-  //TFile* input = new TFile( "../data/20150721/wf_flasher_highstat_04.root", "OPEN" ); // about 256 ticks per TTL
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_072515/wf_run_001.root", "OPEN" );
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_072515/wf_run_002.root", "OPEN" );
 
-  // 2015/07/30: Flasher tuning run
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_083015/wf_run010.root", "OPEN" );
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_073015/wf_run012.root", "OPEN" );
+  int datafile = RAWDIGITS;
+  std::string fname = "/home/tmw/swiz_v4_18_00/workdir/run2219_pmtrawdigits.root";
+  std::string output = "results_run2219.root";
   
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080115/wf_run005.root", "OPEN" );
-  //std::string output = "results_20150801_wf_run_005.root";
-
-  //TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080515/wf_run001.root", "OPEN" );
-  //std::string output = "results_20150806_wf_run_001.root";  
-
-  TFile* input = new TFile( "/home/kterao/LArLite/UserDev/NevisDecoder/Decoder/mac/FlasherData_080715/wf_run004.root", "OPEN" );
-  std::string output = "results_20150807_wf_run_004.root";  
-
-  TTree* tree = (TTree*)input->Get( "raw_wf_tree" );
-
+  TChain* tree;
+  
   unsigned short LOGIC_CH = 39;
   
-  int baseline_start = 100;
-  int baseline_end = 200;
-  int pulse_start = 0;
-  int pulse_end   = 75;
-  int integral_start = 0;
-  int integral_end   = 75;
+  int baseline_start = 0;
+  int baseline_end = 40;
+  int pulse_start = 100;
+  int pulse_end   = 300;
+  int integral_start = 130;
+  int integral_end   = 230;
 
-  unsigned short ch;
-  unsigned short slot;
-  unsigned int event;
-  tree->SetBranchAddress("ch",&ch);
-  tree->SetBranchAddress("slot",&slot);
-  tree->SetBranchAddress("event",&event);
+  unsigned short uch;
+  unsigned short uslot;
+  unsigned int uevent;
+  int ch;
+  int slot;
+  int event;
   std::vector< unsigned short >* adcs = NULL;
   TBranch *badc = 0;
-  tree->SetBranchAddress("wf",&adcs,&badc);
+  if ( datafile==WFTREE ) {
+    tree = new TChain( "raw_wf_tree" );
+    tree->Add( fname.c_str() );
+    tree->SetBranchAddress("ch",&uch);
+    tree->SetBranchAddress("slot",&uslot);
+    tree->SetBranchAddress("event",&uevent);
+    tree->SetBranchAddress("wf",&adcs,&badc);
+  }
+  else {
+    tree = new TChain( "rawdigitwriter/RawData/OpDetWaveforms" );
+    tree->Add( fname.c_str() );
+    tree->SetBranchAddress("opfemch", &ch);
+    tree->SetBranchAddress("opslot",&slot);
+    tree->SetBranchAddress("event",&event);
+    tree->SetBranchAddress("adcs",&adcs,&badc);
+  }
 
   int nentries = tree->GetEntries();
+  std::cout << "Input File has " << nentries << " entries" << std::endl;
+
   LogicPulseFinder<unsigned short> lpf;
   int current_event_start_entry = 0;
   int current_event = 0;
@@ -100,6 +167,8 @@ int main(int argc, char** argv){
   int ievent;
   int opchannel;
   double ave_baseline = 0.;
+  double rms_baseline = 0.;
+  int ngoodbaselines = 0;
   double dt_max;
   TTree* outtree = new TTree("outtree","output");
   outtree->Branch( "event", &ievent, "event/I" );
@@ -107,23 +176,35 @@ int main(int argc, char** argv){
   outtree->Branch( "charge", &charge, "charge/D" );
   outtree->Branch( "maxamp", &maxamp, "maxamp/D" );
   outtree->Branch( "baseline", &ave_baseline, "baseline/D" );
+  outtree->Branch( "baselinerms", &rms_baseline, "baselinerms/D" );
+  outtree->Branch( "ngoodbaselines", &ngoodbaselines, "ngoodbaselines/I" );
   outtree->Branch( "dt_max", &dt_max, "dt_max/D" );
 
   std::vector<int> ttlpulses;
   int entry = 0;
   tree->GetEntry(0);
+  if ( datafile==WFTREE )
+    event = (int)uevent;
   current_event = event;
   current_event_start_entry = entry;
   while ( entry<nentries ) {
 
     // find ttl pulses and then end of event
     tree->GetEntry(entry);
+    if ( datafile==WFTREE ) {
+      event = (int)uevent;
+      ch = (int)uch;
+      slot = (int)uslot;
+    }
+
+    //std::cout << "entry " << entry << " mode=" << mode << std::endl;
 
     // ------------------------------------------------------------
     if ( mode==TTLMODE ) {
       // search for TLL
-      if ( slot!=6 || ch!=LOGIC_CH ) {
+      if ( slot!=6 || ch!=LOGIC_CH )  {
 	entry++;
+	//std::cout << "event=" << event << " slot=" << slot << " ch=" << ch << std::endl;
 	continue;
       }
       //std::cout << "channel 38! adcs=" << adcs->size() << std::endl;
@@ -132,6 +213,12 @@ int main(int argc, char** argv){
       //std::cout << std::endl;
       ttlpulses = lpf.Get_TTL_Starts(*adcs);
       std::cout << "Found " << ttlpulses.size() << " TTL pulses on ch=" << ch << std::endl;
+      if (ttlpulses.size()==0) {
+	for ( int i=0; i<4; i++ ) {
+	  int tdc = 100 + 300*i;
+	  ttlpulses.push_back( tdc );
+	}
+      }
 
       if ( event!=current_event ) {
 	// event boundary. move to next mode, change entry
@@ -170,6 +257,7 @@ int main(int argc, char** argv){
 	  } 
 	  if ( ticks>=20 ) {
 	    double var = sqrt( xx/ticks - (x/ticks)*(x/ticks) );
+	    //std::cout << "baseline var: " << var << std::endl;
 	    if ( var<5.0 ) {
 	      baseline += x/ticks;
 	      ngood_baselines += 1.0;
@@ -177,7 +265,7 @@ int main(int argc, char** argv){
 	  }
 	}//end of loop over pulses (for baselines)
 	ave_baseline = baseline/ngood_baselines;
-
+	ngoodbaselines = int(ngood_baselines);
 	if ( ngood_baselines > 1.0 ) {
 	  for ( int ipulse=0; ipulse<ttlpulses.size(); ipulse++ ) {
 	    int start = ttlpulses.at(ipulse)+pulse_start;
@@ -200,6 +288,7 @@ int main(int argc, char** argv){
 	    opchannel = (int)ch;
 	    ievent = (int)event;
 	    outtree->Fill();
+	    //std::cout << "charge: " << charge << std::endl;
 	  }
 	}
       }
@@ -207,7 +296,7 @@ int main(int argc, char** argv){
     // ------------------------------------------------------------
     entry++;
     //    std::cout << "entry: " << entry << std::endl;
-    //if ( mode==TTLMODE && current_event==10 )
+    //if ( mode==TTLMODE && current_event==100 )
     //break;
   }
 
